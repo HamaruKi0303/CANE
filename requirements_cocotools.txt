@@ -1,0 +1,3 @@
+sklearn
+funcy
+scikit-multilearn
