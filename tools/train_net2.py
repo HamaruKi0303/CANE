@@ -147,7 +147,7 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = (f"{args.dataset_name}-train",)
     cfg.DATASETS.TEST = (f"{args.dataset_name}-val",)
-    cfg.MODEL.WEIGHTS = r"/content/drive/MyDrive/PROJECT/201_HaMaruki/201_32_Layout_parser/layout-model-training-master/layout-model-training-master/output/PRImA/mask_rcnn_R_50_FPN_3x/005/model_0000999.pth"
+    cfg.MODEL.WEIGHTS = r"output/PRImA/mask_rcnn_R_50_FPN_3x/006/model_0009999.pth"
     
     num_gpu = 1
     bs = (num_gpu * 2)
