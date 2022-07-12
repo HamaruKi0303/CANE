@@ -147,6 +147,12 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = (f"{args.dataset_name}-train",)
     cfg.DATASETS.TEST = (f"{args.dataset_name}-val",)
+    cfg.MODEL.WEIGHTS = r"output/PRImA/mask_rcnn_R_50_FPN_3x/006/model_0009999.pth"
+    
+    num_gpu = 1
+    bs = (num_gpu * 2)
+    cfg.SOLVER.BASE_LR = 0.02 * bs / 16  # pick a good LR
+    
     cfg.freeze()
     default_setup(cfg, args)
     return cfg
@@ -171,10 +177,13 @@ def main(args):
     
     args.resume = True
     
+    
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    
     print("args.resume          : {}".format(args.resume))
     print("cfg.MODEL.WEIGHTS    : {}".format(cfg.MODEL.WEIGHTS))
     print("cfg.OUTPUT_DIR       : {}".format(cfg.OUTPUT_DIR))
+    print("cfg.NUM_CLASSES      : {}".format(cfg.MODEL.ROI_HEADS.NUM_CLASSES))
     
 
     if args.eval_only:
@@ -202,6 +211,7 @@ def main(args):
     subclassing the trainer.
     """
     trainer = Trainer(cfg)
+    print("resume_or_load ........")
     trainer.resume_or_load(resume=args.resume)
     trainer.register_hooks(
         [hooks.EvalHook(0, lambda: trainer.eval_and_save(cfg, trainer.model))]

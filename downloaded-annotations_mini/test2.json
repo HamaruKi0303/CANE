@@ -1,0 +1,131 @@
+{
+  "annotations": [
+    {
+      "area": 12276,
+      "bbox": [
+        108,
+        325,
+        396,
+        31
+      ],
+      "category_id": 0,
+      "id": 0,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    },
+    {
+      "area": 12276,
+      "bbox": [
+        108,
+        366,
+        396,
+        31
+      ],
+      "category_id": 0,
+      "id": 1,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    },
+    {
+      "area": 12307,
+      "bbox": [
+        108,
+        407,
+        397,
+        31
+      ],
+      "category_id": 0,
+      "id": 2,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    },
+    {
+      "area": 7900,
+      "bbox": [
+        108,
+        447,
+        395,
+        20
+      ],
+      "category_id": 0,
+      "id": 3,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    },
+    {
+      "area": 8337,
+      "bbox": [
+        108,
+        477,
+        397,
+        21
+      ],
+      "category_id": 0,
+      "id": 4,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    },
+    {
+      "area": 7920,
+      "bbox": [
+        108,
+        507,
+        396,
+        20
+      ],
+      "category_id": 0,
+      "id": 5,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    },
+    {
+      "area": 7920,
+      "bbox": [
+        108,
+        537,
+        396,
+        20
+      ],
+      "category_id": 0,
+      "id": 6,
+      "ignore": 0,
+      "image_id": 3,
+      "iscrowd": 0,
+      "segmentation": []
+    }
+  ],
+  "categories": [
+    {
+      "id": 0,
+      "name": "BibItem"
+    }
+  ],
+  "images": [
+    {
+      "file_name": "images/information_extraction_from_te-3_6774.jpg",
+      "height": 792,
+      "id": 3,
+      "width": 612
+    }
+  ],
+  "info": {
+    "contributor": "Label Studio",
+    "date_created": "2022-02-09 18:32:47.843315",
+    "description": "",
+    "url": "",
+    "version": "1.0",
+    "year": 2022
+  }
+}
