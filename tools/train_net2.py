@@ -147,7 +147,8 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = (f"{args.dataset_name}-train",)
     cfg.DATASETS.TEST = (f"{args.dataset_name}-val",)
-    cfg.MODEL.WEIGHTS = r"/content/drive/MyDrive/PROJECT/201_HaMaruki/201_32_Layout_parser/CANE/output/PRImA/fast_rcnn_R_50_FPN_3x/011/model_0000999.pth"
+    # cfg.MODEL.WEIGHTS = r"/content/drive/MyDrive/PROJECT/201_HaMaruki/201_32_Layout_parser/CANE/output/PRImA/fast_rcnn_R_50_FPN_3x/011/model_0000999.pth"
+    cfg.MODEL.WEIGHTS = args.model_path
     
     num_gpu = 1
     bs = (num_gpu * 2)
@@ -246,6 +247,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--image_path_val",
         help="The path to the validation set image folder",
+    )
+    parser.add_argument(
+        "--model_path",
+        help="The path set model folder",
     )
     args = parser.parse_args()
     print("Command Line Args:", args)
