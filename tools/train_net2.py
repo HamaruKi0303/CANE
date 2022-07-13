@@ -176,7 +176,7 @@ def main(args):
     )
     cfg = setup(args)
     
-    args.resume = True
+    # args.resume = True
     
     
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
@@ -252,6 +252,12 @@ if __name__ == "__main__":
         "--model_path",
         help="The path set model folder",
     )
+    parser.add_argument(
+        '--resume', 
+        action='store_true'
+        help="resume option",
+    )
+    
     args = parser.parse_args()
     print("Command Line Args:", args)
 
