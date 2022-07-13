@@ -7,7 +7,6 @@ model
 model/
 result
 result*/
-outputs/
 
 # Mac Finder Configurations
 .DS_Store
@@ -132,3 +131,4 @@ venv.bak/
 .dmypy.json
 dmypy.json
 datasets/
+*.pth

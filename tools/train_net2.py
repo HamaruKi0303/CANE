@@ -66,9 +66,9 @@ def get_augs(cfg):
             )
         )
     horizontal_flip: bool = cfg.INPUT.RANDOM_FLIP == "horizontal"
-    augs.append(T.RandomFlip(horizontal=horizontal_flip, vertical=not horizontal_flip))
+    # augs.append(T.RandomFlip(horizontal=horizontal_flip, vertical=not horizontal_flip))
     # Rotate the image between -90 to 0 degrees clockwise around the centre
-    augs.append(T.RandomRotation(angle=[-90.0, 0.0]))
+    # augs.append(T.RandomRotation(angle=[-90.0, 0.0]))
     return augs
 
 
@@ -147,7 +147,7 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = (f"{args.dataset_name}-train",)
     cfg.DATASETS.TEST = (f"{args.dataset_name}-val",)
-    cfg.MODEL.WEIGHTS = r"output/PRImA/mask_rcnn_R_50_FPN_3x/006/model_0009999.pth"
+    cfg.MODEL.WEIGHTS = r"/content/drive/MyDrive/PROJECT/201_HaMaruki/201_32_Layout_parser/CANE/output/PRImA/fast_rcnn_R_50_FPN_3x/011/model_0000999.pth"
     
     num_gpu = 1
     bs = (num_gpu * 2)
