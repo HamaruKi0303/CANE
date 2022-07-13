@@ -5,6 +5,7 @@ import logging
 import numpy as np
 import time
 import weakref
+import cv2
 from typing import List, Mapping, Optional
 import torch
 from torch.nn.parallel import DataParallel, DistributedDataParallel
@@ -271,6 +272,23 @@ class SimpleTrainer(TrainerBase):
         """
         If you want to do something with the losses, you can wrap the model.
         """
+        
+        # print("---------------------------------------")
+        # print("data.shape:{}".format(type(data)))
+        # print("data.shape:{}".format(type(data[0]['image'])))
+        # print("data.shape:{}".format(len(data)))
+        # print("data.shape:{}".format(data[0].keys()))
+        # print("data.shape:{}".format(data[0]['image'].shape))
+        # print("data.shape:{}".format(data[0]['image'].max()))
+        # print("data.shape:{}".format(data[0]['image'].min()))
+        # print("start     :{}".format(start))
+        
+        # data_img = data[0]['image'].permute(1, 2, 0)
+        # data_img = data_img.to('cpu').detach().numpy().copy()
+        
+        # cv2.imwrite('output/data_img_{}.png'.format(start), data_img)
+
+        
         loss_dict = self.model(data)
         if isinstance(loss_dict, torch.Tensor):
             losses = loss_dict
