@@ -6,6 +6,8 @@ import numpy as np
 import time
 import weakref
 import cv2
+import glob
+
 from typing import List, Mapping, Optional
 import torch
 from torch.nn.parallel import DataParallel, DistributedDataParallel
@@ -233,7 +235,7 @@ class SimpleTrainer(TrainerBase):
     or write your own training loop.
     """
 
-    def __init__(self, model, data_loader, optimizer):
+    def __init__(self, model, data_loader, optimizer, cfg):
         """
         Args:
             model: a torch Module. Takes a data from data_loader and returns a
@@ -256,6 +258,7 @@ class SimpleTrainer(TrainerBase):
         # to access the data loader iterator, call `self._data_loader_iter`
         self._data_loader_iter_obj = None
         self.optimizer = optimizer
+        self.cfg = cfg
 
     def run_step(self):
         """
@@ -273,23 +276,19 @@ class SimpleTrainer(TrainerBase):
         If you want to do something with the losses, you can wrap the model.
         """
         
-        # print("---------------------------------------")
-        # print("data.shape:{}".format(type(data)))
-        # print("data.shape:{}".format(type(data[0]['image'])))
-        # print("data.shape:{}".format(len(data)))
-        # print("data.shape:{}".format(data[0].keys()))
-        # print("data.shape:{}".format(data[0]['image'].shape))
-        # print("data.shape:{}".format(data[0]['image'].max()))
-        # print("data.shape:{}".format(data[0]['image'].min()))
-        # print("start     :{}".format(start))
-        
-        # data_img = data[0]['image'].permute(1, 2, 0)
-        # data_img = data_img.to('cpu').detach().numpy().copy()
-        
-        # cv2.imwrite('output/data_img_{}.png'.format(start), data_img)
+        if self.iter % self.cfg.SOLVER.CHECKPOINT_PERIOD == 0:
+            print("-----  iter : {: 8d}  ----------------------------------".format(self.iter))          
+
+            # ------------------------------------------
+            # data read
+            #            
+            data_img = data[0]['image'].permute(1, 2, 0)
+            data_img = data_img.to('cpu').detach().numpy().copy()
+            cv2.imwrite(self.cfg.OUTPUT_DIR + '/im{:08d}_origin.png'.format(self.iter), data_img)
 
         
         loss_dict = self.model(data)
+        
         if isinstance(loss_dict, torch.Tensor):
             losses = loss_dict
             loss_dict = {"total_loss": loss_dict}

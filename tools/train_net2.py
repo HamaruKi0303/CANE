@@ -6,6 +6,7 @@ import logging
 import os
 import json
 from collections import OrderedDict
+import glob
 
 import pprint
 import sys
@@ -31,18 +32,22 @@ from detectron2.data.datasets import register_coco_instances
 
 from engine import (
     DefaultTrainer,
+    DefaultPredictor,
     default_argument_parser,
     default_setup,
     hooks,
     launch,
 )
-from detectron2.evaluation import (
+from dtt2.evaluation import (
     COCOEvaluator,
     verify_results,
 )
+from dtt2.utils.visualizer import Visualizer
+
+
 from detectron2.modeling import GeneralizedRCNNWithTTA
 import pandas as pd
-
+import cv2
 
 def get_augs(cfg):
     """Add all the desired augmentations here. A list of availble augmentations
@@ -155,7 +160,7 @@ def setup(args):
     #cfg.SOLVER.BASE_LR = 0.02 * bs / 16  # pick a good LR
     #cfg.SOLVER.BASE_LR = 0.001
     
-    cfg.freeze()
+    # cfg.freeze()
     default_setup(cfg, args)
     return cfg
 
@@ -189,43 +194,98 @@ def main(args):
     print("cfg.SOLVER.BASE_LR   : {}".format(cfg.SOLVER.BASE_LR))
     
     
-    
 
     if args.eval_only:
-        model = Trainer.build_model(cfg)
-        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
-            cfg.MODEL.WEIGHTS, resume=args.resume
-        )
-        res = Trainer.test(cfg, model)
+        
+        
+        
+        
+        pth_list = sorted(glob.glob(cfg.OUTPUT_DIR + "/*.pth"))
+        print("===============================================")
+        print("pth_list")
+        pprint.pprint(pth_list)
+        for pth_path in pth_list:
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
+            print(pth_path)
+            # ------------------------------------------
+            # init
+            #
+            cfg.MODEL.WEIGHTS = pth_path
+            model = Trainer.build_model(cfg)
+            DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+                pth_path, resume=args.resume
+            )
+            res = Trainer.test(cfg, model)
 
-        if cfg.TEST.AUG.ENABLED:
-            res.update(Trainer.test_with_TTA(cfg, model))
-        if comm.is_main_process():
-            verify_results(cfg, res)
+            # ------------------------------------------
+            # check point dir
+            #
+            Checkpoint_name = pth_path.split("/")[-1].split(".")[0]
+            Checkpoint_dir = cfg.OUTPUT_DIR + "/Checkpoint"
+            os.makedirs(Checkpoint_dir, exist_ok=True)
 
-        # Save the evaluation results
-        pd.DataFrame(res).to_csv(f"{cfg.OUTPUT_DIR}/eval.csv")
-        return res
+            # ------------------------------------------
+            # Aug
+            #
+            if cfg.TEST.AUG.ENABLED:
+                res.update(Trainer.test_with_TTA(cfg, model))
+            if comm.is_main_process():
+                verify_results(cfg, res)
 
-    # Ensure that the Output directory exists
-    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+            # Save the evaluation results
+            pd.DataFrame(res).to_csv(f"{cfg.OUTPUT_DIR}/eval.csv")
+            
+            # ------------------------------------------
+            # DefaultPredictor
+            #
+            predictor = DefaultPredictor(cfg)
+            print("Predictor has been initialized.")
+            image = cv2.imread("downloaded-annotations_mini/images/information_extraction_from_te-3_6774.jpg")
+            pred_result = predictor(image)
 
-    """
-    If you'd like to do anything fancier than the standard training logic,
-    consider writing your own training loop (see plain_train_net.py) or
-    subclassing the trainer.
-    """
-    trainer = Trainer(cfg)
-    print("resume_or_load ........")
-    #trainer.resume_or_load(resume=args.resume)
-    trainer.register_hooks(
-        [hooks.EvalHook(0, lambda: trainer.eval_and_save(cfg, trainer.model))]
-    )
-    if cfg.TEST.AUG.ENABLED:
+            # ------------------------------------------
+            # Visual
+            #
+            v = Visualizer(image)
+            out = v.draw_instance_predictions(pred_result['instances'])
+            im = out.get_image()[:, :, ::-1]
+            visual_save_path = Checkpoint_dir + '/im_{}_pred.png'.format(Checkpoint_name)
+            print("visual_save_path : {}".format(visual_save_path))
+            cv2.imwrite(visual_save_path, im)
+            
+            
+            # ------------------------------------------
+            # backbone
+            #
+            # model = predictor.get_model()
+            # features = model.backbone(image)
+            # features_keys = features.keys()
+            # print(">>>> features_keys : {}".format(features_keys))
+        
+        
+        
+        
+    else:
+
+        # Ensure that the Output directory exists
+        os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+
+        """
+        If you'd like to do anything fancier than the standard training logic,
+        consider writing your own training loop (see plain_train_net.py) or
+        subclassing the trainer.
+        """
+        trainer = Trainer(cfg)
+        print("resume_or_load ........")
+        trainer.resume_or_load(resume=args.resume)
         trainer.register_hooks(
-            [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]
+            [hooks.EvalHook(0, lambda: trainer.eval_and_save(cfg, trainer.model))]
         )
-    return trainer.train()
+        if cfg.TEST.AUG.ENABLED:
+            trainer.register_hooks(
+                [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]
+            )
+        return trainer.train()
 
 
 if __name__ == "__main__":
