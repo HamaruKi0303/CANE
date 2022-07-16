@@ -152,6 +152,9 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = (f"{args.dataset_name}-train",)
     cfg.DATASETS.TEST = (f"{args.dataset_name}-val",)
+    
+    cfg.INPUT.CROP.SINGLE_CATEGORY_MAX_AREA = 1.0
+    
     #cfg.MODEL.WEIGHTS = r"/content/drive/MyDrive/CANE/output/PRImA/fast_rcnn_R_50_FPN_3x/012/model_0000999.pth"
     
     
