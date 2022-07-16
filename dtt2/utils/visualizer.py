@@ -397,7 +397,16 @@ class Visualizer:
         classes = predictions.pred_classes.tolist() if predictions.has("pred_classes") else None
         labels = _create_text_labels(classes, scores, self.metadata.get("thing_classes", None))
         keypoints = predictions.pred_keypoints if predictions.has("pred_keypoints") else None
-
+        
+        print("**************************")
+        print("boxes")
+        print(boxes)
+        print("scores")
+        print(scores)
+        print("labels")
+        print(labels)
+        
+        
         if predictions.has("pred_masks"):
             masks = np.asarray(predictions.pred_masks)
             masks = [GenericMask(x, self.output.height, self.output.width) for x in masks]
@@ -1207,9 +1216,9 @@ class Visualizer:
         Convert different format of boxes to an NxB array, where B = 4 or 5 is the box dimension.
         """
         if isinstance(boxes, Boxes) or isinstance(boxes, RotatedBoxes):
-            print("--------")
-            print("boxes.tensor")
-            print(boxes.tensor)
+            # print("--------")
+            # print("boxes.tensor")
+            # print(boxes.tensor)
             #boxes.to('cpu').detach().numpy().copy()
             #return boxes.tensor.detach().numpy()
             return boxes.tensor.to('cpu').detach().numpy()

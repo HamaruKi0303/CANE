@@ -73,7 +73,7 @@ def get_augs(cfg):
     horizontal_flip: bool = cfg.INPUT.RANDOM_FLIP == "horizontal"
     # augs.append(T.RandomFlip(horizontal=horizontal_flip, vertical=not horizontal_flip))
     # Rotate the image between -90 to 0 degrees clockwise around the centre
-    # augs.append(T.RandomRotation(angle=[-90.0, 0.0]))
+    augs.append(T.RandomRotation(angle=[-90.0, 0.0]))
     return augs
 
 

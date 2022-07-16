@@ -174,7 +174,7 @@ class COCOEvaluator(DatasetEvaluator):
             if len(prediction) > 1:
                 self._predictions.append(prediction)
                 
-        print("-------------------------")
+        print("-- self._predictions -----------------------")
         print(self._predictions)
         
 
