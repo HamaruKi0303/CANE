@@ -147,11 +147,13 @@ def setup(args):
 
     cfg.DATASETS.TRAIN = (f"{args.dataset_name}-train",)
     cfg.DATASETS.TEST = (f"{args.dataset_name}-val",)
-    cfg.MODEL.WEIGHTS = args.model_path
+    #cfg.MODEL.WEIGHTS = r"/content/drive/MyDrive/CANE/output/PRImA/fast_rcnn_R_50_FPN_3x/012/model_0000999.pth"
+    
     
     num_gpu = 1
     bs = (num_gpu * 2)
-    cfg.SOLVER.BASE_LR = 0.02 * bs / 16  # pick a good LR
+    #cfg.SOLVER.BASE_LR = 0.02 * bs / 16  # pick a good LR
+    #cfg.SOLVER.BASE_LR = 0.001
     
     cfg.freeze()
     default_setup(cfg, args)
@@ -175,7 +177,7 @@ def main(args):
     )
     cfg = setup(args)
     
-    # args.resume = True
+    #args.resume = False
     
     
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
@@ -184,6 +186,9 @@ def main(args):
     print("cfg.MODEL.WEIGHTS    : {}".format(cfg.MODEL.WEIGHTS))
     print("cfg.OUTPUT_DIR       : {}".format(cfg.OUTPUT_DIR))
     print("cfg.NUM_CLASSES      : {}".format(cfg.MODEL.ROI_HEADS.NUM_CLASSES))
+    print("cfg.SOLVER.BASE_LR   : {}".format(cfg.SOLVER.BASE_LR))
+    
+    
     
 
     if args.eval_only:
@@ -212,7 +217,7 @@ def main(args):
     """
     trainer = Trainer(cfg)
     print("resume_or_load ........")
-    trainer.resume_or_load(resume=args.resume)
+    #trainer.resume_or_load(resume=args.resume)
     trainer.register_hooks(
         [hooks.EvalHook(0, lambda: trainer.eval_and_save(cfg, trainer.model))]
     )
@@ -249,14 +254,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--model_path",
-        help="The path set model folder",
+        help="The path  set model path",
     )
-    parser.add_argument(
-        '--resume', 
-        action='store_true'
-        help="resume option",
-    )
-    
+
     args = parser.parse_args()
     print("Command Line Args:", args)
 
